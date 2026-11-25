@@ -1,0 +1,43 @@
+TEMA LAB 15: GLOSARUL SI VARIANTA PENTRU LINKEDIN
+==================================================
+
+PROBLEMA
+Echipa de marketing vrea doua lucruri noi:
+1. Un glosar: termenii pe care ii folosim si cei pe care ii evitam
+   («rapoarte programate», nu «scheduled reports»).
+2. Pentru fiecare articol, si o varianta scurta pentru LinkedIn.
+Varianta LinkedIn NU trebuie sa coste o cercetare noua: faptele sunt deja
+in /cercetare/note.md.
+
+CE CONSTRUITI
+Agentul din demo5, cu o memorie in plus si un pas in plus.
+
+UNDE LUCRATI
+lib/blog/agenti.ts, in creeazaDeepCuMemorie (sau o copie a ei).
+Glosarul: copiati exercitiu/GLOSAR.md in redactie/GLOSAR.md.
+
+CE FACETI
+TODO 1  redactie/GLOSAR.md in lista memory, langa /AGENTS.md.
+TODO 2  Un pas nou in system prompt: dupa articol, varianta LinkedIn in
+        /articole/linkedin.md, cel mult trei fraze, scrisa din fisierele
+        existente. Spuneti explicit: «Pentru ea NU mai cauti in surse.»
+TODO 3  Planul (write_todos) are un pas in plus: «varianta LinkedIn».
+
+DOVADA (patru puncte, din pagina /blog, demo5)
+1. Lista de fisiere: /articole/linkedin.md apare langa articol.
+2. Pasii: de cate ori a fost chemat cautaSurse? Ar trebui sa fie la fel ca
+   fara varianta LinkedIn.
+3. Glosarul: cautati in articol si in varianta LinkedIn termenii din
+   coloana «Nu folosim». Ii gasiti?
+4. Contextul la fiecare apel: cu cat a crescut fata de demo5 fara tema?
+   De ce creste, desi glosarul e mic? (indiciu: memory intra la FIECARE apel)
+
+INDICII
+- memory primeste cai relative la backend: "/GLOSAR.md", nu "redactie/GLOSAR.md".
+- Daca agentul cauta din nou in surse pentru LinkedIn, problema e aproape
+  mereu in system prompt: interdictia trebuie spusa explicit.
+- Daca linkedin.md nu apare, verificati planul: pasul trebuie sa fie si in
+  write_todos, nu doar in prompt.
+- Rezolvarea: exercitiu/referinta.ts. Uitati-va abia dupa ce ati incercat.
+
+TERMEN: Lab 16 (25 noiembrie).

@@ -1,0 +1,39 @@
+{
+  "name": "lab15-deep-agents-blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "verifica": "tsx verificare/test-lab15.ts",
+    "masoara": "tsx verificare/masoara-harness.ts",
+    "tipuri": "tsc --noEmit",
+    "reset": "node -e \"for (const d of ['redactie/articole','redactie/cercetare']) require('fs').rmSync(d, { recursive: true, force: true }); console.log('redactie/articole si redactie/cercetare sterse')\""
+  },
+  "dependencies": {
+    "@langchain/anthropic": "1.5.12",
+    "@langchain/core": "1.2.17",
+    "@langchain/google-genai": "2.3.2",
+    "@langchain/langgraph": "1.5.0",
+    "@langchain/ollama": "1.3.0",
+    "@langchain/openai": "1.6.2",
+    "deepagents": "1.15.1",
+    "langchain": "1.5.16",
+    "next": "16.3.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^22.20.3",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "esbuild": "0.28.2",
+    "tailwindcss": "^4",
+    "tsx": "4.23.15",
+    "typescript": "^5.6.0"
+  }
+}
