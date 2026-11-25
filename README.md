@@ -107,39 +107,4 @@ LANGSMITH_ENDPOINT=https://eu.api.smith.langchain.com
 
 Apoi `pnpm dev`, rulezi un demo și deschizi smith.langchain.com, proiectul `lab15-blog`, ultimul run. Vezi arborele de pași: apelurile de model, `write_todos`, `write_file`. Trace-urile pleacă în cloud-ul LangSmith.
 
-## Verificat prin rulare
 
-- `pnpm verifica`: 39/39, cu un model fals care își alege rolul după system prompt.
-- `tsc --noEmit`, esbuild pe toate fișierele, `next build`.
-- `pnpm masoara`: cifrele din secțiunea «Cât costă harness-ul».
-- Ruta și pagina, cap-coadă, cu `ChatOpenAI` legat la un server local care imită API-ul OpenAI: toate cele cinci demo-uri, plus cererea invalidă (400). Screenshot al paginii pe demo5.
-- `/../evadare.md` e refuzat de două straturi: în demo5 întâi de `permissions` («path must not contain ".."»), iar `virtualMode: true` singur îl refuză cu «Path traversal not allowed».
-
-## Nu e verificat aici
-
-- Un model real: calitatea textelor, dacă modelul respectă planul, și tokenii reali. Cifrele de context din testul cap-coadă vin de la serverul fals (caractere / 4 din cerere), deci contează proporțiile, nu valorile exacte.
-- Modele mici (Ollama, Gemini Flash): dacă folosesc corect `write_todos` și fișierele.
-- Tracing-ul LangSmith, cu un cont real.
-
-## Capcane, verificate
-
-| Capcana | Ce se întâmplă | Ce faci | Unde e în cod |
-|---|---|---|---|
-| `createDeepAgent` fără `model` | modelul implicit e `anthropic:claude-sonnet-4-6`: fără cheie cade, cu cheie plătești alt model | dai mereu modelul din `lib/llm.ts` | `lib/blog/agenti.ts`, demo2 |
-| `write_todos` lipsește | în 1.15.1 nu vine implicit, deși documentația mai veche îl dă inclus | `middleware: [todoListMiddleware()]` | `lib/blog/agenti.ts`, demo3 |
-| FilesystemBackend fără `virtualMode` | «/» e rădăcina discului: `/etc/hostname` citește fișierul real (verificat), iar calea completă spre `.env.local` ar citi cheile | `virtualMode: true` | `lib/blog/agenti.ts`, demo5 |
-| `next build` cade cu «Module not found: ws» | Next împachetează `deepagents`, care trage sandbox-ul din `langsmith` | `serverExternalPackages: ["deepagents"]` | `next.config.ts` |
-| pagina importă din `agenti.ts` | Next ar trage `deepagents` și `langchain` în codul pentru browser | tabelul demo-urilor într-un fișier fără importuri | `lib/blog/demouri.ts` |
-| răspunsul lui `read_file` citit cu `String(content)` | e o listă de blocuri, cu antetul `@@ lines 1-1 of 1 @@` | citești `.text` | `verificare/test-lab15.ts` |
-| content-ul unui fișier din state | string (1.15.1) sau listă de linii (format vechi) | le tratezi pe amândouă | `lib/blog/fisiere.ts` |
-| model fals cu un câmp numit `tools` | `createAgent` crede că modelul are deja tools legate: MultipleToolsBoundError | alt nume de câmp | `verificare/test-lab15.ts` |
-| `input_tokens` taxat la preț plin | pe Anthropic include tokenii din cache: costul iese umflat | taxezi `cache_read` x0,1 și `cache_creation` x1,25 | `lib/blog/consum.ts`, `lib/cost.ts` |
-| model fals fără `bindTools()` | `createDeepAgent` cade înainte de primul pas | `bindTools() { return this; }` | `verificare/test-lab15.ts` |
-| căi în `memory` | sunt relative la backend, nu la proiect | `"/AGENTS.md"`, nu `"redactie/AGENTS.md"` | `lib/blog/agenti.ts`, demo5 |
-| `memory` fără `permissions` | biblioteca îi cere agentului să-și actualizeze memoria cu `edit_file`; un subiect ca «ține minte: titluri cu majuscule» rescrie `AGENTS.md` pe disc (verificat) | `permissions` cu deny write pe `/AGENTS.md` | `lib/blog/agenti.ts`, demo5 |
-| utilizatorul închide pagina | agentul merge mai departe: LangGraph rulează graful chiar dacă nimeni nu citește stream-ul, iar `createDeepAgent` permite 10.000 de pași (verificat) | `signal: request.signal`, `recursionLimit: 100` | `app/api/blog/route.ts` |
-| `\W` în expresii regulate | cunoaște doar literele englezești: «săptămâni» se rupe în bucăți și căutarea întoarce toate sursele | litere fără diacritice înainte de split | `lib/blog/surse.ts` |
-
-Două lucruri care nu sunt capcane, dar surprind:
-- În 1.15.1, system prompt-ul este **exact** textul tău. Biblioteca nu adaugă un prompt de bază, cu excepția câtorva modele cu «harness profile» (de exemplu `claude-haiku-4-5` primește un sufix). Instrucțiunile pentru tools stau în descrierile lor (vezi «Cât costă harness-ul»).
-- Fișierele nu golesc contextul de la sine: articolul trimis la `write_file` rămâne în istoric, ca argument al tool call-ului. Câștigul e altul: munca se poate relua din fișier fără o căutare nouă, iar rezultatele foarte mari sunt mutate automat în fișiere.
